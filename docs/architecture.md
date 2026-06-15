@@ -186,7 +186,19 @@ export default apiClient;
 
 ---
 
-## 5. Deployment
+## 5. Contribution Model (Registry Pattern)
+
+To allow developers to add new features without breaking existing ones, the portal uses a **Feature Registry Pattern**. This acts as a lightweight plugin system:
+
+1. **Feature Definition (`FeatureDefinition`)**: Each feature defines its route, icon, component, and required roles.
+2. **Registry (`src/features/index.ts`)**: Features are exported into a central array.
+3. **Auto-Generation**: The sidebar navigation and React Router definitions are automatically generated from this registry.
+4. **Isolation**: Strict ESLint rules (`no-restricted-imports`) prevent cross-feature dependencies. Features can only depend on shared code in `src/shared/`.
+5. **Workflow**: Contributors are guided by `CONTRIBUTING.md` to build within their feature folder and only touch the registry file to "plugin" their feature.
+
+---
+
+## 6. Deployment
 
 ### Dockerfile
 
@@ -237,7 +249,7 @@ server {
 
 ---
 
-## 6. Environment Variables
+## 7. Environment Variables
 
 ```bash
 # Azure AD
