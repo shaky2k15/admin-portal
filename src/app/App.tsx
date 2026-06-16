@@ -3,7 +3,7 @@ import { AuthProvider } from '@/app/providers/AuthProvider';
 import { QueryProvider } from '@/app/providers/QueryProvider';
 import { ThemeProvider } from '@/app/providers/ThemeProvider';
 import { router } from '@/app/routes';
-import { FullPageLoader } from '@/shared/components/feedback/LoadingSpinner';
+
 
 export default function App() {
   return (
@@ -12,7 +12,6 @@ export default function App() {
         <ThemeProvider>
           <RouterProvider
             router={router}
-            fallbackElement={<FullPageLoader label="Starting up…" />}
           />
         </ThemeProvider>
       </QueryProvider>
