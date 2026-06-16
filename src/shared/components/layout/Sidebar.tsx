@@ -1,4 +1,7 @@
-import { useLocation, Link } from 'react-router-dom';
+'use client';
+
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { create } from 'zustand';
@@ -27,7 +30,7 @@ export const useSidebar = create<SidebarState>()(
 );
 
 export function Sidebar() {
-  const location = useLocation();
+  const pathname = usePathname();
   const { expanded, toggleSidebar } = useSidebar();
 
   return (
@@ -53,15 +56,13 @@ export function Sidebar() {
         {/* Navigation */}
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
           {features.map((feature) => {
-            const isActive =
-              location.pathname === feature.path ||
-              location.pathname.startsWith(`${feature.path}/`);
+            const isActive = pathname.startsWith(feature.path);
             const Icon = feature.icon;
 
             const navItem = (
               <Link
                 key={feature.id}
-                to={feature.path}
+                href={feature.path}
                 className={cn(
                   'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
                   isActive

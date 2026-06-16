@@ -1,16 +1,21 @@
-import { useState } from 'react';
-import { useAuth } from '@/features/auth/hooks/useAuth';
-import { isAzureADEnabled } from '@/features/auth/config/msalConfig';
-import { Shield } from 'lucide-react';
-import { Navigate, useNavigate } from 'react-router-dom';
+'use client';
 
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { Shield } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 export default function LoginPage() {
   const { login, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('admin123');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   const handleMockLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,17 +24,13 @@ export default function LoginPage() {
 
     try {
       await login(username, password);
-      navigate('/dashboard');
+      router.push('/dashboard');
     } catch {
       setError('Invalid username or password');
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a0e27] via-[#131842] to-[#1a0a2e]">
@@ -72,33 +73,7 @@ export default function LoginPage() {
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
           </div>
 
-          {isAzureADEnabled ? (
-            /* ── Azure AD mode ────────────────────────────────────── */
-            <>
-              <button
-                onClick={() => void login()}
-                className="group flex w-full items-center justify-center gap-3 rounded-xl bg-[#0078d4] px-6 py-3.5 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-200 hover:bg-[#106ebe] hover:shadow-blue-500/40 active:scale-[0.98]"
-              >
-                <svg
-                  className="h-5 w-5"
-                  viewBox="0 0 21 21"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect x="1" y="1" width="9" height="9" fill="#f25022" />
-                  <rect x="11" y="1" width="9" height="9" fill="#7fba00" />
-                  <rect x="1" y="11" width="9" height="9" fill="#00a4ef" />
-                  <rect x="11" y="11" width="9" height="9" fill="#ffb900" />
-                </svg>
-                Sign in with Microsoft
-              </button>
-
-              <p className="mt-6 text-center text-xs text-slate-500">
-                Protected by Azure Active Directory
-              </p>
-            </>
-          ) : (
-            /* ── Mock / dev mode ──────────────────────────────────── */
+          {process.env.NEXT_PUBLIC_MOCK_AUTH === 'true' ? (
             <form onSubmit={(e) => void handleMockLogin(e)} className="space-y-4">
               <div>
                 <label
@@ -160,6 +135,30 @@ export default function LoginPage() {
                 <span className="font-mono text-slate-400">admin123</span>
               </p>
             </form>
+          ) : (
+            <>
+              <button
+                onClick={() => void login()}
+                className="group flex w-full items-center justify-center gap-3 rounded-xl bg-[#0078d4] px-6 py-3.5 font-semibold text-white shadow-lg shadow-blue-500/25 transition-all duration-200 hover:bg-[#106ebe] hover:shadow-blue-500/40 active:scale-[0.98]"
+              >
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 21 21"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect x="1" y="1" width="9" height="9" fill="#f25022" />
+                  <rect x="11" y="1" width="9" height="9" fill="#7fba00" />
+                  <rect x="1" y="11" width="9" height="9" fill="#00a4ef" />
+                  <rect x="11" y="11" width="9" height="9" fill="#ffb900" />
+                </svg>
+                Sign in with Microsoft
+              </button>
+
+              <p className="mt-6 text-center text-xs text-slate-500">
+                Protected by Azure Active Directory
+              </p>
+            </>
           )}
         </div>
 

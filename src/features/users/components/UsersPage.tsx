@@ -1,3 +1,5 @@
+'use client';
+
 import { UserPlus } from 'lucide-react';
 import { UserTable } from '@/features/users/components/UserTable';
 

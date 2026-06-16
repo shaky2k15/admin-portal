@@ -1,4 +1,6 @@
-import { useLocation } from 'react-router-dom';
+'use client';
+
+import { usePathname } from 'next/navigation';
 import { Bell, Moon, Sun } from 'lucide-react';
 import { useTheme } from '@/app/providers/ThemeProvider';
 import { features } from '@/features';
@@ -9,19 +11,19 @@ interface HeaderProps {
 }
 
 export function Header({ className }: HeaderProps) {
-  const location = useLocation();
+  const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
 
   // Derive page title from current feature
   const currentFeature = features.find(
     (f) =>
-      location.pathname === f.path ||
-      location.pathname.startsWith(`${f.path}/`),
+      pathname === f.path ||
+      pathname.startsWith(`${f.path}/`),
   );
   const pageTitle = currentFeature?.label ?? 'Dashboard';
 
   // Build breadcrumb segments
-  const pathSegments = location.pathname
+  const pathSegments = pathname
     .split('/')
     .filter(Boolean);
 

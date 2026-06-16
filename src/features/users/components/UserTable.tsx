@@ -1,3 +1,5 @@
+'use client';
+
 import { Search, ChevronDown } from 'lucide-react';
 import { useUsers } from '@/features/users/hooks/useUsers';
 import type { UserRole } from '@/features/users/hooks/useUsers';

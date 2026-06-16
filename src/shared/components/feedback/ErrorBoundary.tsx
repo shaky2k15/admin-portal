@@ -54,7 +54,7 @@ export class ErrorBoundary extends Component<
               if the problem persists.
             </p>
 
-            {import.meta.env.DEV && this.state.error && (
+            {process.env.NODE_ENV !== 'production' && this.state.error && (
               <details className="mb-6 rounded-lg bg-muted/50 p-3 text-left">
                 <summary className="cursor-pointer text-xs font-medium text-muted-foreground">
                   Error details

@@ -1,12 +1,13 @@
-import { Outlet } from 'react-router-dom';
-import { Suspense } from 'react';
+'use client';
+
+import { ReactNode, Suspense } from 'react';
 import { Sidebar, useSidebar } from '@/shared/components/layout/Sidebar';
 import { Header } from '@/shared/components/layout/Header';
 import { LoadingSpinner } from '@/shared/components/feedback/LoadingSpinner';
 import { ErrorBoundary } from '@/shared/components/feedback/ErrorBoundary';
 import { cn } from '@/shared/lib/utils';
 
-export function AppLayout() {
+export function AppLayout({ children }: { children: ReactNode }) {
   const expanded = useSidebar((s) => s.expanded);
 
   return (
@@ -30,7 +31,7 @@ export function AppLayout() {
                 </div>
               }
             >
-              <Outlet />
+              {children}
             </Suspense>
           </ErrorBoundary>
         </main>

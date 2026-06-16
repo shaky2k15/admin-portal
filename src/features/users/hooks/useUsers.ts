@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useMemo } from 'react';
 
 export type UserRole = 'Admin' | 'Editor' | 'Viewer';

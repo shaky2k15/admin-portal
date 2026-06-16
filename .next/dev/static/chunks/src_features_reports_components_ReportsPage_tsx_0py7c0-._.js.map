@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/sekhar/.gemini/antigravity/scratch/admin-portal/src/features/reports/components/ReportsPage.tsx"],"sourcesContent":["'use client';\n\n\n\nexport default function ReportsPage() {\n    return (\n        <div className=\"animate-fade-in p-6\">\n            <h1 className=\"text-2xl font-bold\">Reports</h1>\n            {/* Your feature content */}\n        </div>\n    );\n}"],"names":["ReportsPage","className"],"mappings":";;;;;AAAA;;AAIe,SAASA;IACpB,qBACI,6LAAC;QAAIC,WAAU;kBACX,cAAA,6LAAC;YAAGA,WAAU;sBAAqB;;;;;;;;;;;AAI/C;KAPwBD"}}]
+}

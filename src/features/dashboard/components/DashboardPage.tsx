@@ -1,3 +1,5 @@
+'use client';
+
 import { WelcomeBanner } from '@/features/dashboard/components/WelcomeBanner';
 import { StatsCards } from '@/features/dashboard/components/StatsCards';
 import { RecentActivity } from '@/features/dashboard/components/RecentActivity';

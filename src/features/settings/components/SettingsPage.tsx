@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Moon, Sun, Monitor, Shield, Bell, Mail, Newspaper, Trash2, ChevronRight } from 'lucide-react';
 import { useSettings } from '@/features/settings/hooks/useSettings';

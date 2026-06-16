@@ -1,11 +1,8 @@
 import axios from 'axios';
-import {
-  isAzureADEnabled,
-  msalInstance,
-} from '@/features/auth/config/msalConfig';
+import { getSession } from 'next-auth/react';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL as string,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || '',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,30 +10,17 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   async (config) => {
-    if (isAzureADEnabled) {
-      const accounts = msalInstance.getAllAccounts();
-
-      if (accounts.length > 0) {
-        try {
-          const clientId = import.meta.env.VITE_AZURE_CLIENT_ID as string;
-          const response = await msalInstance.acquireTokenSilent({
-            scopes: [`api://${clientId}/.default`],
-            account: accounts[0],
-          });
-
-          config.headers.Authorization = `Bearer ${response.accessToken}`;
-        } catch (error) {
-          console.warn(
-            'Token acquisition failed, proceeding without auth:',
-            error,
-          );
-        }
+    try {
+      const session: any = await getSession();
+      if (session?.accessToken) {
+        config.headers.Authorization = `Bearer ${session.accessToken}`;
+      } else {
+        // Mock mode — attach a dev token
+        config.headers.Authorization = 'Bearer mock-token-dev';
       }
-    } else {
-      // Mock mode — attach a dev token
-      config.headers.Authorization = 'Bearer mock-token-dev';
+    } catch (error) {
+      console.warn('Token acquisition failed, proceeding without auth:', error);
     }
-
     return config;
   },
   (error) => Promise.reject(error),

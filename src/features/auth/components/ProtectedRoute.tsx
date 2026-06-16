@@ -1,17 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '@/features/auth/hooks/useAuth';
-import { FullPageLoader } from '@/shared/components/feedback/LoadingSpinner';
-
+// Deprecated in Next.js app router. Replaced by middleware.
 export function ProtectedRoute() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <FullPageLoader label="Authenticating…" />;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <Outlet />;
+  return null;
 }

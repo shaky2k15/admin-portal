@@ -1,0 +1,12 @@
+{
+  "/(dashboard)/analytics/page": "/analytics",
+  "/(dashboard)/dashboard/page": "/dashboard",
+  "/(dashboard)/reports/page": "/reports",
+  "/(dashboard)/settings/page": "/settings",
+  "/(dashboard)/users/page": "/users",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/auth/[...nextauth]/route": "/api/auth/[...nextauth]",
+  "/login/page": "/login",
+  "/page": "/"
+}

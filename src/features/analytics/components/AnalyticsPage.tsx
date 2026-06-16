@@ -1,3 +1,5 @@
+'use client';
+
 import { CalendarDays, Loader2 } from 'lucide-react';
 import { useAnalytics } from '@/features/analytics/hooks/useAnalytics';
 import { BarChart, DonutChart, MetricCards } from '@/features/analytics/components/Charts';

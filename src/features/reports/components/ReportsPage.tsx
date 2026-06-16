@@ -1,3 +1,7 @@
+'use client';
+
+
+
 export default function ReportsPage() {
     return (
         <div className="animate-fade-in p-6">

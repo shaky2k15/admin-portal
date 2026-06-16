@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import type { BarDataPoint, MetricCard as MetricCardType } from '@/features/analytics/hooks/useAnalytics';
