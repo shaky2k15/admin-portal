@@ -5,12 +5,14 @@ import {
   Users,
   BarChart3,
   Settings,
+  FileText
 } from 'lucide-react';
 
 const DashboardPage = lazy(() => import('@/features/dashboard/components/DashboardPage'));
 const UsersPage = lazy(() => import('@/features/users/components/UsersPage'));
 const AnalyticsPage = lazy(() => import('@/features/analytics/components/AnalyticsPage'));
 const SettingsPage = lazy(() => import('@/features/settings/components/SettingsPage'));
+const ReportsPage = lazy(() => import('@/features/reports/components/ReportsPage'));
 
 export const features: FeatureDefinition[] = [
   {
@@ -42,4 +44,11 @@ export const features: FeatureDefinition[] = [
     path: '/settings',
     component: SettingsPage,
   },
+  {
+    id: 'reports',
+    label: 'Reports',
+    icon: FileText,
+    path: '/reports',
+    component: ReportsPage,
+  }
 ];
