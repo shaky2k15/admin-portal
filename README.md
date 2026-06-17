@@ -4,35 +4,39 @@
 
 > **Note:** This project was accomplished using **Antigravity Vibe Coding**. 🚀
 
-A modern, highly-maintainable, and easily portable React-based admin portal designed for internal code contributions and team management.
+A modern, highly-maintainable, and secure full-stack admin portal designed for internal team management and platform analytics.
 
 ## Features
 
-- **Feature-Based Architecture**: Low maintenance, highly scalable, and easy to extend.
-- **Dual Auth System**: Built-in support for Azure AD (via MSAL.js) and a fallback mock auth system for local development.
+- **Next.js App Router**: Built on the latest Next.js features utilizing server components and clean layouts.
+- **Backend-For-Frontend (BFF) Auth**: Highly secure authentication via **NextAuth**. Tokens are kept entirely out of browser storage and are managed via `HttpOnly` cookies securely on the Next.js server.
+- **Dual Auth System**: Built-in support for Azure AD (via NextAuth) and a fallback mock auth credentials system for local development.
 - **Premium UI**: Designed with Tailwind CSS, shadcn/ui tokens, glassmorphism, and smooth micro-animations.
-- **Zero Vendor Lock-in**: Outputs to static files that can be deployed anywhere.
-- **Docker Ready**: Includes a multi-stage Dockerfile and Nginx configuration for a lightweight (~25MB) deployment.
+- **Feature-Based Architecture**: Low maintenance, highly scalable, and easy to extend.
 
 ## Getting Started
 
 Check out the [CONTRIBUTING.md](./CONTRIBUTING.md) guide for detailed instructions on:
 - Local development setup
-- Testing Azure AD
+- Testing Azure AD authentication via BFF
 - The architecture overview
-- Step-by-step guide to adding new features without breaking core components
+- Step-by-step guide to adding new features cleanly
 
 ## Quick Start (Mock Auth Mode)
 
 1. **Install dependencies:**
    ```bash
-   npm install --legacy-peer-deps
+   npm install
    ```
 
 2. **Set up env variables:**
+   Create a `.env.local` file and enable mock authentication:
    ```bash
-   cp .env.example .env
-   # Ensure VITE_ENABLE_AZURE_AD=false is set in your .env
+   touch .env.local
+   # Add the following to your .env.local:
+   # NEXT_PUBLIC_MOCK_AUTH="true"
+   # NEXTAUTH_SECRET="development-secret-key"
+   # NEXTAUTH_URL="http://localhost:3000"
    ```
 
 3. **Run the dev server:**
@@ -41,12 +45,12 @@ Check out the [CONTRIBUTING.md](./CONTRIBUTING.md) guide for detailed instructio
    ```
 
 4. **Log in:**
-   Navigate to `http://localhost:5173` and log in with `admin` / `admin123`.
+   Navigate to `http://localhost:3000` and log in with `admin` / `admin123`.
 
 ## Tech Stack
 
-- **Framework**: Vite + React 19 + TypeScript
-- **Routing**: React Router v7
+- **Framework**: Next.js (App Router) + React 19 + TypeScript
+- **Auth**: NextAuth.js (Backend-For-Frontend Pattern)
 - **State Management**: Zustand (UI) + TanStack Query (Server)
 - **Styling**: Tailwind CSS v4 + Radix UI Primitives
-- **Auth**: MSAL.js v2 (`@azure/msal-react`)
+- **Icons**: Lucide React

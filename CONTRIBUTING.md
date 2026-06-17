@@ -1,6 +1,6 @@
 # Contributing to the Admin Portal
 
-Welcome! This document outlines how to run the Admin Portal locally and how to add new features without breaking existing functionality.
+Welcome! This document outlines how to run the Admin Portal locally and how to add new features following our Next.js App Router and Backend-For-Frontend (BFF) architecture.
 
 ## Table of Contents
 1. [Local Development Setup](#1-local-development-setup)
@@ -23,18 +23,26 @@ To get the app running on your machine, you need **Node.js** (v18+) and **npm**.
 
 2. **Install dependencies**:
    ```bash
-   npm install --legacy-peer-deps
+   npm install
    ```
 
 3. **Set up environment variables**:
-   Duplicate the `.env.example` file and rename it to `.env`:
+   Create a `.env.local` file in the root directory:
    ```bash
-   cp .env.example .env
+   touch .env.local
    ```
 
-   By default, the app is set to run in **Mock Auth Mode** so you don't need real Azure credentials to start developing:
+   By default, the app can run in **Mock Auth Mode** so you don't need real Azure credentials to start developing. Add the following to your `.env.local`:
    ```env
-   VITE_ENABLE_AZURE_AD=false
+   # Enable mock credentials login form
+   NEXT_PUBLIC_MOCK_AUTH="true"
+
+   # NextAuth core configuration
+   NEXTAUTH_SECRET="development-secret-key-12345"
+   NEXTAUTH_URL="http://localhost:3000"
+
+   # API Base
+   NEXT_PUBLIC_API_BASE_URL="http://localhost:8080"
    ```
 
 4. **Start the development server**:
@@ -43,7 +51,7 @@ To get the app running on your machine, you need **Node.js** (v18+) and **npm**.
    ```
 
 5. **Log in**:
-   Open `http://localhost:5173`. Use the following mock credentials to log in:
+   Open `http://localhost:3000`. Use the following mock credentials to log in:
    - **Username**: `admin`
    - **Password**: `admin123`
 
@@ -51,26 +59,29 @@ To get the app running on your machine, you need **Node.js** (v18+) and **npm**.
 
 ## 2. Testing Azure AD locally
 
-If you need to test actual authentication against Azure AD, you'll need a registered App in Azure.
+If you need to test actual authentication against Azure AD via the NextAuth BFF pattern, you'll need a registered App in Azure.
 
-1. Open your `.env` file and update the following:
+1. Open your `.env.local` file and update the following:
    ```env
-   VITE_ENABLE_AZURE_AD=true
-   VITE_AZURE_CLIENT_ID=your-client-id-here
-   VITE_AZURE_TENANT_ID=your-tenant-id-here
-   VITE_AZURE_REDIRECT_URI=http://localhost:5173
+   # Disable the mock auth form
+   NEXT_PUBLIC_MOCK_AUTH="false"
+
+   # Azure configuration
+   VITE_AZURE_CLIENT_ID="your-client-id-here"
+   AZURE_AD_CLIENT_SECRET="your-client-secret-here"
+   VITE_AZURE_TENANT_ID="your-tenant-id-here"
    ```
-2. Restart the dev server. The app will now redirect to Microsoft for sign-in.
+2. Restart the dev server. The app will now redirect to Microsoft for sign-in when you hit the login page.
 
 ---
 
 ## 3. Architecture Overview
 
-We use a **Feature-Based Architecture**. This means instead of grouping files by *type* (e.g., all components in one folder, all hooks in another), we group them by *feature* (e.g., all code related to "Users" lives in `src/features/users/`).
+We use a **Feature-Based Architecture** paired with the **Next.js App Router**. This means instead of grouping files by *type* (e.g., all components in one folder, all hooks in another), we group them by *feature* (e.g., all code related to "Users" lives in `src/features/users/`), and we use Next.js `src/app/` exclusively for routing.
 
 ```
 src/
-├── app/          # Core shell (Providers, Router, App component)
+├── app/          # Next.js App Router (Routes, Layouts, API Handlers)
 ├── shared/       # Reusable components, hooks, and types (Buttons, Layout)
 └── features/     # Feature modules (Dashboard, Users, Analytics, etc.)
 ```
@@ -81,7 +92,7 @@ src/
 
 ## 4. How to Add a New Feature (Step-by-Step)
 
-We use a "Registry Pattern". You can build an entire new page/feature in complete isolation without ever touching the core router or layout files.
+We keep features isolated and cleanly map them to Next.js routes.
 
 ### Step 1: Create your feature folder
 Create a new folder in `src/features/` (e.g., `src/features/reports/`).
@@ -93,13 +104,15 @@ src/features/reports/
 │   └── ReportsPage.tsx
 ├── hooks/
 ├── api/
-└── feature.ts        <-- The public API for your feature
+└── feature.ts        <-- Metadata for the sidebar
 ```
 
 ### Step 2: Build your main page component
-Create your page component in `src/features/reports/components/ReportsPage.tsx`. Use a default export.
+Create your page component in `src/features/reports/components/ReportsPage.tsx`. Use a default export. Since our components rely on React hooks, add `'use client'` to the top of interactive components.
 
 ```tsx
+'use client';
+
 export default function ReportsPage() {
   return (
     <div className="animate-fade-in p-6">
@@ -110,44 +123,39 @@ export default function ReportsPage() {
 }
 ```
 
-### Step 3: Define your Feature
-Create `src/features/reports/feature.ts` to tell the app how to render your feature.
+### Step 3: Create the Next.js Route
+Link your feature to the Next.js routing system. Create a page file in the `src/app/(dashboard)/` group.
+For example, to map to `/reports`, create `src/app/(dashboard)/reports/page.tsx`:
+
+```tsx
+import ReportsPage from '@/features/reports/components/ReportsPage';
+
+export default function Page() {
+  return <ReportsPage />;
+}
+```
+
+### Step 4: Register your Feature for the Sidebar
+To make your feature appear in the global sidebar navigation, add it to the feature registry. Open `src/features/index.ts` and add your feature to the list:
 
 ```typescript
-import { lazy } from 'react';
 import { FileText } from 'lucide-react';
 import type { FeatureDefinition } from '@/shared/types/feature';
 
-// Lazy load your main page so it doesn't block the initial app load
-const ReportsPage = lazy(() => import('./components/ReportsPage'));
-
-export const reports: FeatureDefinition = {
-  id: 'reports',          // Unique ID
-  label: 'Reports',       // What shows up in the sidebar
-  icon: FileText,         // Lucide-react icon for the sidebar
-  path: '/reports',       // The URL route
-  component: ReportsPage, // The component to render
-};
-```
-
-### Step 4: Register your Feature
-Finally, add your feature to the global registry. Open `src/features/index.ts` and add your feature to the list:
-
-```typescript
-import { dashboard } from './dashboard/feature';
-import { users } from './users/feature';
-// ...
-import { reports } from './reports/feature'; // 1. Import it
-
-export const features = [
-  dashboard,
-  users,
+// Add to the features array
+export const features: FeatureDefinition[] = [
   // ...
-  reports, // 2. Add it to the array
+  {
+    id: 'reports',
+    label: 'Reports',
+    icon: FileText,
+    path: '/reports',
+    // component field is kept for legacy compatibility but the Sidebar only uses path and icon
+  }
 ];
 ```
 
-**That's it!** The app will automatically create a route for `/reports` and add a "Reports" button to the sidebar. You didn't have to touch any core routing or layout code.
+**That's it!** The Next.js App router handles the page, the middleware automatically protects it, and the sidebar will display your new link.
 
 ---
 
